@@ -6,7 +6,7 @@ import (
 )
 
 func home_page(page http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(page, "Testing startpage")
+	fmt.Fprintf(page, "Poshel Nahui")
 }
 
 func main() {
