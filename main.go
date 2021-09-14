@@ -1,15 +1,28 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+    "html/template"
+    "net/http"
+    "os"
 )
 
-func home_page(page http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(page, "Test Message!")
+var tpl = template.Must(template.ParseFiles("index.html"))
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+    tpl.Execute(w, nil)
 }
 
 func main() {
-	http.HandleFunc("/", home_page)
-	http.ListenAndServe(":8080", nil)
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+
+    mux := http.NewServeMux()
+
+    fs := http.FileServer(http.Dir("assets"))
+    mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
+
+    mux.HandleFunc("/", indexHandler)
+    http.ListenAndServe(":"+port, mux)
 }
